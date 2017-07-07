@@ -22,13 +22,15 @@ case = str.lower(sys.argv[1])
 cases = {
     'leeroy': {'vid': 'mLyOj_QD4a4', 'trim': ['-t', '00:00:04.500', '-ss', '00:01:25.500']},
     'kotka' : {'vid': 'plahwm0vfys', 'trim': None},
-    'ujas'  : {'vid': 'Wp3pmqBDzQ8', 'trim': ['-t', '00:00:07.000', '-ss', '00:00:00.500']}
+    'ujas'  : {'vid': 'Wp3pmqBDzQ8', 'trim': ['-t', '00:00:07.750', '-ss', '00:00:00.750']},
+    'rosene': {'vid': '4j17NuD0LdA', 'trim': ['-t', '00:00:02.000', '-ss', '00:05:46.250']},
+    'pari'  : {'vid': 'D6euGRsvh8o', 'trim': ['-t', '00:00:02.000', '-ss', '00:01:24.000']}
 }
 
 format = 'wav'
 
 if case in cases:
-    fname = os.path.dirname(os.path.realpath(__file__)) + '/' + case + '.' + format
+    fname = os.path.dirname(os.path.realpath(__file__)) + '/audio/' + case + '.' + format
 else:
     print ('Unknown case')
     sys.exit()
@@ -39,13 +41,10 @@ if not os.path.exists(fname):
     'format': 'bestaudio/best',
     'outtmpl': fname[:fname.find('.wav')] + '.%(ext)s',  # this has to be set with %ext, otherwise ffmpeg is not called
     'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': format, 'preferredquality': '5', 'nopostoverwrites': False}],
-#    'postprocessor_args': cases[case]['trim'],
     'quiet': True
     }
     if cases[case]['trim'] != None:
         ydl_opts['postprocessor_args'] = cases[case]['trim']
-
-#    print (ydl_opts)
 
     # Setup youtube-dl object
     ydl = youtube_dl.YoutubeDL(ydl_opts)
