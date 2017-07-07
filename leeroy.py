@@ -14,7 +14,7 @@ import pygame
 
 # Script accepts exactly one argument
 if len(sys.argv) != 2:
-    print ("Please supply only one sound name/case")
+    print ('Please supply only one sound name/case')
     sys.exit()
 
 case = str.lower(sys.argv[1])
@@ -25,18 +25,20 @@ cases = {
     'ujas'  : {'vid': 'Wp3pmqBDzQ8', 'trim': ['-t', '00:00:07.000', '-ss', '00:00:00.500']}
 }
 
+format = 'wav'
+
 if case in cases:
-    fname = os.path.dirname(os.path.realpath(__file__)) + "/" + case + ".wav"
+    fname = os.path.dirname(os.path.realpath(__file__)) + '/' + case + '.' + format
 else:
-    print ("Unknown case")
+    print ('Unknown case')
     sys.exit()
 
 # Download and convert sound file if it doesn't exist
 if not os.path.exists(fname):
     ydl_opts = {
     'format': 'bestaudio/best',
-    'outtmpl': case + '.%(ext)s',
-    'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '5', 'nopostoverwrites': False}],
+    'outtmpl': fname[:fname.find('.wav')] + '.%(ext)s',  # this has to be set with %ext, otherwise ffmpeg is not called
+    'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': format, 'preferredquality': '5', 'nopostoverwrites': False}],
 #    'postprocessor_args': cases[case]['trim'],
     'quiet': True
     }
@@ -48,7 +50,9 @@ if not os.path.exists(fname):
     # Setup youtube-dl object
     ydl = youtube_dl.YoutubeDL(ydl_opts)
     # Perform download and postprocessing
-    ydl.download ([cases[case]['vid']])
+    if ydl.download ([cases[case]['vid']]) > 0:
+        print ('Error when downloading audio')
+        sys.exit()
 
 pygame.mixer.init()
 pygame.mixer.music.load(fname)
