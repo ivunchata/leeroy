@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# audio files
+*.wav
+
 # C extensions
 *.so
 
@@ -99,3 +102,6 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# vim swap files
+*.swp
