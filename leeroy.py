@@ -13,13 +13,19 @@ import pygame
 # If youtube-dl is outdated or libs are missing - upgrade with: sudo -H pip install --upgrade youtube-dl pygame
 
 # Script accepts exactly one argument
-if len(sys.argv) > 2:
+if len(sys.argv) != 2:
     print ("Please supply only one sound name/case")
     sys.exit()
 
 case = str.lower(sys.argv[1])
 
-if case in ["leeroy", "kotka"]:
+cases = {
+    'leeroy': {'vid': 'mLyOj_QD4a4', 'trim': ['-t', '00:00:04.500', '-ss', '00:01:25.500']},
+    'kotka' : {'vid': 'plahwm0vfys', 'trim': None},
+    'ujas'  : {'vid': 'Wp3pmqBDzQ8', 'trim': ['-t', '00:00:07.000', '-ss', '00:00:00.500']}
+}
+
+if case in cases:
     fname = os.path.dirname(os.path.realpath(__file__)) + "/" + case + ".wav"
 else:
     print ("Unknown case")
@@ -31,20 +37,18 @@ if not os.path.exists(fname):
     'format': 'bestaudio/best',
     'outtmpl': case + '.%(ext)s',
     'postprocessors': [{'key': 'FFmpegExtractAudio', 'preferredcodec': 'wav', 'preferredquality': '5', 'nopostoverwrites': False}],
+#    'postprocessor_args': cases[case]['trim'],
     'quiet': True
     }
+    if cases[case]['trim'] != None:
+        ydl_opts['postprocessor_args'] = cases[case]['trim']
 
-    if case == "leeroy":
-        ydl_str = "mLyOj_QD4a4"
-        ydl_opts['postprocessor_args'] = ['-t', '00:00:04.500', '-ss', '00:01:25.500']
-
-    if case == "kotka":
-        ydl_str = "plahwm0vfys"
+#    print (ydl_opts)
 
     # Setup youtube-dl object
     ydl = youtube_dl.YoutubeDL(ydl_opts)
     # Perform download and postprocessing
-    ydl.download ([ydl_str])
+    ydl.download ([cases[case]['vid']])
 
 pygame.mixer.init()
 pygame.mixer.music.load(fname)
